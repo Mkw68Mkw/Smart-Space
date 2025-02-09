@@ -32,7 +32,7 @@ function Dashboard() {
     // Geschützte Daten vom Backend abrufen
     const getProtectedData = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/protected", {
+        const response = await fetch("https://roomreservation-flaskserver.onrender.com/api/protected", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`, // Token im Header senden
@@ -60,7 +60,7 @@ function Dashboard() {
     // Reservierungsdaten abrufen
     const getReservations = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/reservations", {
+        const response = await fetch("https://roomreservation-flaskserver.onrender.com/api/reservations", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`, // Token im Header senden

@@ -29,7 +29,7 @@ const ResourceCalendar: React.FC = () => {
   // Funktion zum Abrufen der Räume vom Backend
   const fetchResources = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/rooms"); // Deine Backend-URL
+      const response = await fetch("https://roomreservation-flaskserver.onrender.com/api/rooms"); // Deine Backend-URL
       if (!response.ok) {
         throw new Error("Netzwerkantwort war nicht ok");
       }
@@ -51,7 +51,8 @@ const ResourceCalendar: React.FC = () => {
   const fetchEvents = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/api/reservations_withoutAuth",
+        //"http://localhost:8080/api/reservations_withoutAuth",
+        "https://roomreservation-flaskserver.onrender.com/api/reservations_withoutAuth",
         {
           method: "GET",
           headers: {
@@ -102,7 +103,7 @@ const ResourceCalendar: React.FC = () => {
     // Geschützte Daten vom Backend abrufen
     const getProtectedData = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/protected", {
+        const response = await fetch("https://roomreservation-flaskserver.onrender.com/api/protected", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`, // Token im Header senden

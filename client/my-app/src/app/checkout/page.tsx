@@ -47,7 +47,7 @@ const CheckoutPage: React.FC = () => {
 
     try {
       // Sende die finale Reservierung an das Backend
-      const response = await fetch("http://localhost:8080/api/reserve", {
+      const response = await fetch("https://roomreservation-flaskserver.onrender.com/api/reserve", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

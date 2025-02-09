@@ -18,7 +18,14 @@ app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', secrets.token_he
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=10)  # Ablaufzeit des Tokens (30 Minuten)
 
 # SQLAlchemy konfigurieren
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Xiaomiao1@localhost/phase1_mydb'
+
+#Localhost
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Xiaomiao1@localhost/phase1_mydb'
+
+#AWS RDS
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:Xiaomiao1$@roomreservationdb.chgqgaiaee5i.eu-north-1.rds.amazonaws.com/phase1_mydb'
+
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # SQLAlchemy-Datenbankinstanz erstellen
