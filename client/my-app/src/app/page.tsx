@@ -14,6 +14,11 @@ import {
 import { useRouter } from "next/navigation";
 import { link } from "fs";
 import { toast } from "sonner"; // Fügen Sie diesen Import hinzu
+import { format } from "date-fns";
+import { Building, CalendarCheck, Clock, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import deLocale from '@fullcalendar/core/locales/de';
 
 const ResourceCalendar: React.FC = () => {
   const [resources, setResources] = useState<any[]>([]); // Zustand für Ressourcen
@@ -199,93 +204,216 @@ const ResourceCalendar: React.FC = () => {
   };
 
   return (
-    <div className="p-5 bg-white rounded-lg shadow-md">
-      {/* Header Section */}
-<div className="flex justify-between items-center mb-6">
-  <h1 className="text-3xl font-bold text-gray-800">Raumplaner</h1>
-  {jwtToken && user ? (
-    <div className="flex items-center space-x-4">
-      <h2 className="text-xl text-gray-700">Willkommen, {user}</h2>
-      <a href="/dashboard">
-        <button 
-          className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
-        >
-          Dashboard
-        </button>
-      </a>
-      <button 
-        onClick={handleLogout}
-        className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
-      >
-        Logout
-      </button>
-    </div>
-  ) : (
-    <a href="/login">
-      <button className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
-        Login
-      </button>
-    </a>
-  )}
-</div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <Building className="h-8 w-8 text-white" />
+              <h1 className="text-3xl font-bold tracking-tight">Raumreservierung</h1>
+            </div>
+            
+            {jwtToken && user ? (
+              <div className="flex items-center gap-6">
+                <div className="flex items-center gap-2">
+                  <span className="bg-white/10 p-2 rounded-lg">
+                    <CalendarCheck className="h-5 w-5" />
+                  </span>
+                  <span className="font-medium">{user}</span>
+                </div>
+                <Link href="/dashboard">
+                  <Button 
+                    variant="ghost" 
+                    className="hover:bg-white/10 text-white"
+                  >
+                    Dashboard
+                  </Button>
+                </Link>
+                <Button 
+                  onClick={handleLogout}
+                  variant="ghost"
+                  className="hover:bg-white/10"
+                >
+                  Abmelden
+                </Button>
+              </div>
+            ) : (
+              <Link href="/login">
+                <Button className="bg-white text-blue-600 hover:bg-white/90">
+                  Anmelden
+                </Button>
+              </Link>
+            )}
+          </div>
 
-      {/* Calendar Section */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <FullCalendar
-          plugins={[resourceTimelinePlugin, interactionPlugin]}
-          initialView="resourceTimelineDay"
-          resources={resources} // Ressourcen aus dem Zustand
-          events={events} // Events aus dem Zustand
-          selectable={true}
-          select={handleSelect}
-          eventDrop={(info) =>
-            console.log(
-              `Event dropped: ${info.event.title} to ${info.event.start}`
-            )
-          }
-          resourceAreaHeaderContent="Rooms"
-          headerToolbar={{
-            left: "prev,next today",
-            center: "title",
-            right: "resourceTimelineDay,resourceTimelineWeek",
-          }}
-          height="auto"
-          ref={calendarRef}
-        />
+          <div className="mt-16 text-center">
+            <h2 className="text-4xl font-bold mb-4">Finden Sie den perfekten Raum</h2>
+            <p className="text-lg text-blue-100 max-w-2xl mx-auto">
+              Modern ausgestattete Räume für Meetings, Workshops und Events - 
+              einfach buchen und sofort verfügbar
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Dialog Section */}
+      {/* Calendar Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 -mt-20">
+        <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-6">
+          <div className="mb-8 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Clock className="h-6 w-6 text-blue-600" />
+              <h3 className="text-2xl font-bold text-gray-900">
+                Echtzeit-Belegungsplan
+              </h3>
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                className="rounded-lg"
+                onClick={() => {
+                  if (calendarRef.current) {
+                    const calendarApi = calendarRef.current.getApi()
+                    calendarApi.today() // Zur aktuellen Datumsansicht springen
+                    calendarApi.changeView('resourceTimelineDay') // Standardansicht wiederherstellen
+                  }
+                }}
+              >
+                Heute
+              </Button>
+            </div>
+          </div>
+
+          <FullCalendar
+            plugins={[resourceTimelinePlugin, interactionPlugin]}
+            initialView="resourceTimelineDay"
+            locales={[deLocale]}
+            locale="de"
+            slotLabelFormat={{
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+              meridiem: false
+            }}
+            eventTimeFormat={{
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false
+            }}
+            resources={resources}
+            events={events}
+            selectable={true}
+            select={handleSelect}
+            headerToolbar={{
+              left: "prev,next",
+              center: "title",
+              right: "resourceTimelineDay,resourceTimelineWeek",
+            }}
+            height="auto"
+            ref={calendarRef}
+            eventContent={(eventInfo) => (
+              <div className="fc-event-main-frame">
+                <div className="fc-event-title-container">
+                  <div className="fc-event-title bg-blue-100/80 text-blue-800 px-2 py-1 rounded text-sm">
+                    {eventInfo.event.title}
+                  </div>
+                </div>
+              </div>
+            )}
+          />
+        </div>
+      </div>
+
+      {/* Features Section */}
+      <div className="bg-white border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { 
+                icon: <Star className="h-8 w-8" />,
+                title: "Einfache Buchung",
+                text: "Intuitive Oberfläche für schnelle Reservierungen"
+              },
+              {
+                icon: <Clock className="h-8 w-8" />,
+                title: "Echtzeit-Update",
+                text: "Aktuelle Verfügbarkeit immer im Blick"
+              },
+              {
+                icon: <Building className="h-8 w-8" />,
+                title: "Moderne Räume",
+                text: "Top-ausgestattet für jeden Anlass"
+              }
+            ].map((feature, idx) => (
+              <div key={idx} className="p-6 bg-gray-50 rounded-xl hover:bg-white transition-all">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="bg-blue-600 text-white p-3 rounded-lg">
+                    {feature.icon}
+                  </div>
+                  <h4 className="text-xl font-semibold">{feature.title}</h4>
+                </div>
+                <p className="text-gray-600">{feature.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Dialog Section (existing with visual enhancements) */}
       <Dialog open={isModalOpen} onOpenChange={closeModal}>
-        <DialogContent className="max-w-md p-6 rounded-lg">
+        <DialogContent className="max-w-md p-8 rounded-2xl border-0 shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
+          <DialogHeader>
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-xl -m-6 mb-6">
+              <DialogTitle className="text-2xl font-bold">
+                Reservierung bestätigen
+              </DialogTitle>
+            </div>
+          </DialogHeader>
+          
           {selectedEvent && (
-            <form onSubmit={reserveRoom} className="space-y-4">
-              <div>
-                <label htmlFor="purpose" className="block text-sm font-medium text-gray-700">
-                  Zweck der Buchung:
-                </label>
-                <input
-                  id="purpose"
-                  type="text"
-                  value={purpose}
-                  onChange={(e) => setPurpose(e.target.value)}
-                  required
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                />
+            <form onSubmit={reserveRoom} className="space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Zeitraum
+                  </label>
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <span className="text-gray-700 font-medium">
+                      {format(selectedEvent.startdate, "dd.MM.yyyy HH:mm")} -{" "}
+                      {format(selectedEvent.enddate, "dd.MM.yyyy HH:mm")}
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="purpose" className="block text-sm font-medium text-gray-700 mb-2">
+                    Zweck der Buchung
+                  </label>
+                  <input
+                    id="purpose"
+                    type="text"
+                    value={purpose}
+                    onChange={(e) => setPurpose(e.target.value)}
+                    required
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all placeholder-gray-400"
+                    placeholder="z.B. Teammeeting, Präsentation..."
+                  />
+                </div>
               </div>
 
               <div className="flex justify-end space-x-3">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  className="px-5 py-2.5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 transition-colors duration-200"
                 >
                   Abbrechen
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  className="px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium transition-colors duration-200 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
-                  Reservieren
+                  Weiter zum Checkout
                 </button>
               </div>
             </form>

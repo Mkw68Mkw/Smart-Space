@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { format } from "date-fns";
+import { Building, CalendarClock, ClipboardList } from "lucide-react";
 
 const CheckoutPage: React.FC = () => {
   const [reservation, setReservation] = useState<any>(null);
@@ -75,44 +77,66 @@ const CheckoutPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Deine Reservierung</h2>
+    <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg">
+      <h2 className="text-3xl font-bold text-gray-900 mb-8">Reservierungsübersicht</h2>
       {jwtToken ? (
-        <div>
+        <div className="space-y-8">
           {reservation ? (
-            <form onSubmit={handleReservationSubmit} className="space-y-6">
-              <div className="space-y-4">
-                <div>
-                  <p className="text-lg font-medium text-gray-700">
-                    Zimmer: <span className="font-semibold">{reservation.roomName}</span>
-                  </p>
+            <form onSubmit={handleReservationSubmit} className="space-y-8">
+              <div className="bg-gray-50 p-6 rounded-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <Building className="h-6 w-6 text-green-600" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900">Raumdetails</h3>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-600">Startdatum:</p>
-                    <p className="font-medium text-gray-800">{reservation.startdate}</p>
+                <p className="text-lg text-gray-700">
+                  {reservation.roomName}
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-gray-50 p-6 rounded-xl">
+                  <div className="flex items-center gap-3 mb-4">
+                    <CalendarClock className="h-6 w-6 text-blue-600" />
+                    <h4 className="text-lg font-medium text-gray-900">Zeitraum</h4>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Enddatum:</p>
-                    <p className="font-medium text-gray-800">{reservation.enddate}</p>
-                  </div>
+                  <dl className="space-y-2">
+                    <div>
+                      <dt className="text-sm text-gray-500">Von</dt>
+                      <dd className="font-medium text-gray-900">
+                        {format(new Date(reservation.startdate), "dd.MM.yyyy HH:mm")}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-sm text-gray-500">Bis</dt>
+                      <dd className="font-medium text-gray-900">
+                        {format(new Date(reservation.enddate), "dd.MM.yyyy HH:mm")}
+                      </dd>
+                    </div>
+                  </dl>
                 </div>
 
-                <div>
-                  <p className="text-sm text-gray-600">Zweck:</p>
-                  <p className="font-medium text-gray-800">{reservation.purpose}</p>
+                <div className="bg-gray-50 p-6 rounded-xl">
+                  <div className="flex items-center gap-3 mb-4">
+                    <ClipboardList className="h-6 w-6 text-purple-600" />
+                    <h4 className="text-lg font-medium text-gray-900">Buchungsdetails</h4>
+                  </div>
+                  <dl className="space-y-2">
+                    <div>
+                      <dt className="text-sm text-gray-500">Zweck</dt>
+                      <dd className="font-medium text-gray-900">{reservation.purpose}</dd>
+                    </div>
+                  </dl>
                 </div>
               </div>
 
-              <div className="pt-4">
-                <button
-                  type="submit"
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
-                >
-                  Reservierung abschließen
-                </button>
-              </div>
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-emerald-100"
+              >
+                Reservierung bestätigen
+              </button>
             </form>
           ) : (
             <p className="text-gray-600">Keine Reservierungsdaten vorhanden.</p>

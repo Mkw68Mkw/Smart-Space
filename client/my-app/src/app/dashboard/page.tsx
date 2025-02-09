@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { format } from "date-fns";
 
 function Dashboard() {
   const [user, setUser] = useState(null);
@@ -94,7 +95,7 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-full">
+    <div className="min-h-full bg-gray-50">
       {/* Navigationsleiste */}
       <nav className="bg-gray-800">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -143,55 +144,63 @@ function Dashboard() {
           </div>
         </div>
       </nav>
-      <div className="flex flex-col justify-center items-center flex-grow mt-10">
-        {" "}
-        {/* Container für die Box */}
-        <div className="w-[400px] bg-gray-50 flex flex-col text-center p-4 rounded-lg shadow-md gap-4 al justify-center items-center">
-          <h1 className="font-bold text-2xl">Willkommen im Dashboard</h1>
-          {user ? ( // wenn User vorhanden
-            <div>
-              <h2 className="text-xl">Eingeloggt als: {user}</h2>
-              <p>{message}</p>
-            </div>
-          ) : (
-            // wenn nicht
-            <p>Lade Benutzerinformationen...</p>
-          )}
-          <Button onClick={handleLogout}>Abmelden</Button>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Willkommen zurück, {user}</h1>
+          <p className="text-gray-600">{message}</p>
+        </div>
+
+        {/* Statistik-Karten */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-900">Aktive Reservierungen</h3>
+            <p className="text-2xl font-bold text-indigo-600 mt-2">{reservations.length}</p>
+          </div>
+          {/* Weitere Statistik-Karten hier einfügen */}
+        </div>
+
+        {/* Verbesserte Tabelle */}
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-gray-200">
+            <h2 className="text-xl font-semibold text-gray-900">Deine Reservierungen</h2>
+          </div>
+          <Table className="min-w-full divide-y divide-gray-200">
+            <TableHeader className="bg-gray-50">
+              <TableRow>
+                {["Raum", "Zweck", "Startzeit", "Endzeit"].map((header) => (
+                  <TableHead 
+                    key={header} 
+                    className="px-6 py-4 text-left text-sm font-semibold text-gray-900"
+                  >
+                    {header}
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody className="divide-y divide-gray-200">
+              {reservations.map((reservation) => (
+                <TableRow 
+                  key={reservation.id} 
+                  className="hover:bg-gray-50 transition-colors"
+                >
+                  <TableCell className="px-6 py-4 font-medium text-gray-900">
+                    {reservation.room_name}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-gray-600">
+                    {reservation.Zweck}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-gray-600">
+                    {format(new Date(reservation.Startzeit), "dd.MM.yyyy HH:mm")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-gray-600">
+                    {format(new Date(reservation.Endzeit), "dd.MM.yyyy HH:mm")}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       </div>
-      {/* Reservierungen anzeigen */}
-      <h2>Deine Reservierungen:</h2>
-
-      <Table className="p-50">
-        <TableCaption>Deine Reservierungen</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Raum</TableHead>
-            <TableHead>Zweck</TableHead>
-            <TableHead>Startzeit</TableHead>
-            <TableHead>Endzeit</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {reservations.length > 0 ? (
-            reservations.map((reservation) => (
-              <TableRow key={reservation.id}>
-                <TableCell className="font-medium">
-                  {reservation.room_name}
-                </TableCell>
-                <TableCell>{reservation.Zweck}</TableCell>
-                <TableCell>{reservation.Startzeit}</TableCell>
-                <TableCell>{reservation.Endzeit}</TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={4}>Keine Reservierungen gefunden.</TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
     </div>
   );
 }
