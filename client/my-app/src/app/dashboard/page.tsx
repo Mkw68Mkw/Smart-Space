@@ -12,10 +12,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
-import { Building, CalendarCheck, Clock, Star } from "lucide-react";
+import { Building, CalendarCheck, Clock, Star, Pencil, Trash } from "lucide-react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toast } from "react-hot-toast";
 
 function Dashboard() {
   const [user, setUser] = useState(null);
@@ -23,6 +25,11 @@ function Dashboard() {
   const [reservations, setReservations] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedReservation, setSelectedReservation] = useState(null);
+  const [editPurpose, setEditPurpose] = useState("");
+  const [editStart, setEditStart] = useState("");
+  const [editEnd, setEditEnd] = useState("");
   const router = useRouter();
 
   // Beim Laden der Komponente den geschützten Inhalt abrufen
@@ -114,6 +121,72 @@ function Dashboard() {
     
     return matchesSearch;
   });
+
+  //http://localhost:8080/api/reservations_withoutAuth
+  //https://roomreservation-flaskserver.onrender.com/api/reservations/
+
+  // Delete reservation
+  const handleDelete = async (id) => {
+    if (confirm("Möchten Sie diese Reservierung wirklich löschen?")) {
+      try {
+        const response = await fetch(`https://roomreservation-flaskserver.onrender.com/api/reservations/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        });
+        
+        if (response.ok) {
+          setReservations(reservations.filter(r => r.id !== id));
+          toast.success("Reservierung gelöscht");
+        }
+      } catch (error) {
+        toast.error("Fehler beim Löschen");
+      }
+    }
+  };
+
+  // Update reservation
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        `https://roomreservation-flaskserver.onrender.com/api/reservations/${selectedReservation.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+          body: JSON.stringify({
+            purpose: editPurpose,
+            start: editStart,
+            end: editEnd,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const updatedReservation = await response.json();
+        setReservations(reservations.map(r => 
+          r.id === updatedReservation.reservation.id ? updatedReservation.reservation : r
+        ));
+        setEditModalOpen(false);
+        toast.success("Reservierung aktualisiert");
+      }
+    } catch (error) {
+      toast.error("Fehler beim Aktualisieren");
+    }
+  };
+
+  // Open edit modal
+  const openEditModal = (reservation) => {
+    setSelectedReservation(reservation);
+    setEditPurpose(reservation.Zweck);
+    setEditStart(new Date(reservation.Startzeit).toISOString());
+    setEditEnd(new Date(reservation.Endzeit).toISOString());
+    setEditModalOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -244,6 +317,22 @@ function Dashboard() {
                   <TableCell className="px-6 py-4 text-gray-600">
                     {format(new Date(reservation.Endzeit), "dd.MM.yyyy HH:mm")}
                   </TableCell>
+                  <TableCell className="px-6 py-4 space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => openEditModal(reservation)}
+                    >
+                      <Pencil className="h-4 w-4 text-blue-600" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDelete(reservation.id)}
+                    >
+                      <Trash className="h-4 w-4 text-red-600" />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -256,6 +345,59 @@ function Dashboard() {
           )}
         </div>
       </div>
+
+      {/* Edit Modal */}
+      <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reservierung bearbeiten</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleUpdate} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Zweck
+              </label>
+              <Input
+                value={editPurpose}
+                onChange={(e) => setEditPurpose(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Startzeit
+              </label>
+              <Input
+                type="datetime-local"
+                value={editStart.slice(0, 16)}
+                onChange={(e) => setEditStart(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Endzeit
+              </label>
+              <Input
+                type="datetime-local"
+                value={editEnd.slice(0, 16)}
+                onChange={(e) => setEditEnd(e.target.value)}
+                required
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setEditModalOpen(false)}
+              >
+                Abbrechen
+              </Button>
+              <Button type="submit">Speichern</Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
