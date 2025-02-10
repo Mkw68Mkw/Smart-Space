@@ -12,11 +12,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
+import { Building, CalendarCheck, Clock, Star } from "lucide-react";
+import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 function Dashboard() {
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
   const [reservations, setReservations] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
   const router = useRouter();
 
   // Beim Laden der Komponente den geschützten Inhalt abrufen
@@ -94,91 +100,134 @@ function Dashboard() {
     router.push("/login");
   };
 
+  const filteredReservations = reservations.filter(reservation => {
+    const matchesSearch = reservation.room_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      reservation.Zweck.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const currentTime = new Date();
+    const startTime = new Date(reservation.Startzeit);
+    const endTime = new Date(reservation.Endzeit);
+    
+    if (filterStatus === "active") return currentTime >= startTime && currentTime <= endTime;
+    if (filterStatus === "upcoming") return currentTime < startTime;
+    if (filterStatus === "past") return currentTime > endTime;
+    
+    return matchesSearch;
+  });
+
   return (
-    <div className="min-h-full bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Navigationsleiste */}
-      <nav className="bg-gray-800">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <img
-                  className="h-8 w-8"
-                  src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
-                  alt="Your Company"
-                />
-              </div>
-              <div className="hidden md:block">
-                <div className="ml-10 flex items-baseline space-x-4">
-                  <a
-                    href="#"
-                    className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
-                    aria-current="page"
-                  >
-                    Dashboard
-                  </a>
-                  <a
-                    href="/"
-                    className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                  >
-                    Calendar
-                  </a>
-                  <a
-                    href="#"
-                    className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                  >
-                    Reports
-                  </a>
-                </div>
-              </div>
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <Building className="h-8 w-8 text-white" />
+              <h1 className="text-2xl font-bold tracking-tight">Raumreservierung Dashboard</h1>
             </div>
-            {/* Logout-Button */}
-            <div>
-              <button
-                className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
+            
+            <div className="flex items-center gap-6">
+              <Link href="/">
+                <Button 
+                  variant="ghost"
+                  className="hover:bg-white/10 text-white"
+                >
+                  Zurück zur Übersicht
+                </Button>
+              </Link>
+              <Button 
                 onClick={handleLogout}
+                variant="ghost"
+                className="hover:bg-white/10"
               >
-                Logout
-              </button>
+                Abmelden
+              </Button>
             </div>
           </div>
         </div>
-      </nav>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Willkommen zurück, {user}</h1>
-          <p className="text-gray-600">{message}</p>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Begrüßungsbereich */}
+        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8 border border-gray-100">
+          <div className="flex items-center gap-4">
+            <div className="bg-blue-100 p-3 rounded-xl">
+              <CalendarCheck className="h-8 w-8 text-blue-600" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Willkommen zurück, {user}</h1>
+              <p className="text-gray-600 mt-2">{message}</p>
+            </div>
+          </div>
         </div>
 
         {/* Statistik-Karten */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900">Aktive Reservierungen</h3>
-            <p className="text-2xl font-bold text-indigo-600 mt-2">{reservations.length}</p>
+          <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
+            <div className="flex items-center gap-4">
+              <div className="bg-green-100 p-2 rounded-lg">
+                <Building className="h-6 w-6 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Aktive Reservierungen</h3>
+            </div>
+            <p className="text-3xl font-bold text-gray-900 mt-4">{reservations.length}</p>
           </div>
+          
           {/* Weitere Statistik-Karten hier einfügen */}
         </div>
 
-        {/* Verbesserte Tabelle */}
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        {/* Filter Section */}
+        <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Input
+            placeholder="Suche nach Raum oder Zweck..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="rounded-xl bg-white shadow-sm"
+          />
+          
+          <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="rounded-xl bg-white shadow-sm">
+              <SelectValue placeholder="Status filtern" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Alle Reservierungen</SelectItem>
+              <SelectItem value="active">Aktive</SelectItem>
+              <SelectItem value="upcoming">Bevorstehende</SelectItem>
+              <SelectItem value="past">Vergangene</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Reservierungstabelle */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100">
           <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Deine Reservierungen</h2>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Clock className="h-6 w-6 text-blue-600" />
+                <h2 className="text-2xl font-bold text-gray-900">Deine Reservierungen</h2>
+              </div>
+              <span className="text-sm text-gray-500">
+                {filteredReservations.length} Einträge gefunden
+              </span>
+            </div>
           </div>
-          <Table className="min-w-full divide-y divide-gray-200">
+          
+          <Table className="min-w-full">
             <TableHeader className="bg-gray-50">
               <TableRow>
                 {["Raum", "Zweck", "Startzeit", "Endzeit"].map((header) => (
                   <TableHead 
                     key={header} 
-                    className="px-6 py-4 text-left text-sm font-semibold text-gray-900"
+                    className="px-6 py-4 text-left font-semibold text-gray-900"
                   >
                     {header}
                   </TableHead>
                 ))}
               </TableRow>
             </TableHeader>
+            
             <TableBody className="divide-y divide-gray-200">
-              {reservations.map((reservation) => (
+              {filteredReservations.map((reservation) => (
                 <TableRow 
                   key={reservation.id} 
                   className="hover:bg-gray-50 transition-colors"
@@ -199,6 +248,12 @@ function Dashboard() {
               ))}
             </TableBody>
           </Table>
+          
+          {filteredReservations.length === 0 && (
+            <div className="p-6 text-center text-gray-500">
+              Keine Reservierungen gefunden
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -211,7 +211,7 @@ const ResourceCalendar: React.FC = () => {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
               <Building className="h-8 w-8 text-white" />
-              <h1 className="text-3xl font-bold tracking-tight">Raumreservierung</h1>
+              <h1 className="text-3xl font-bold tracking-tight">SmartSpace</h1>
             </div>
             
             {jwtToken && user ? (
