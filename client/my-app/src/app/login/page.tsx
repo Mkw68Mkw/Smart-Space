@@ -59,58 +59,60 @@ function LoginPage() {
         </Button>
       </div>
 
-      <div className="w-[380px] bg-white flex flex-col p-8 rounded-2xl shadow-lg">
-        <div className="text-center mb-8">
-          <h1 className="font-bold text-3xl text-gray-900 mb-2">Willkommen zurück</h1>
-          <p className="text-gray-500">Bitte melden Sie sich an, um fortzufahren</p>
-        </div>
-
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Benutzername</label>
-            <Input
-              placeholder="Geben Sie Ihren Benutzernamen ein"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
+      <div className="w-full max-w-[380px] px-4">
+        <div className="bg-white flex flex-col p-6 md:p-8 rounded-2xl shadow-lg w-full">
+          <div className="text-center mb-8">
+            <h1 className="font-bold text-3xl text-gray-900 mb-2">Willkommen zurück</h1>
+            <p className="text-gray-500">Bitte melden Sie sich an, um fortzufahren</p>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Passwort</label>
-            <Input
-              placeholder="••••••••"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <Button 
-            variant="default" 
-            onClick={handleLogin}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors"
-          >
-            Anmelden
-          </Button>
-
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Benutzername</label>
+              <Input
+                placeholder="Geben Sie Ihren Benutzernamen ein"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Noch kein Konto?</span>
-            </div>
-          </div>
 
-          <Button 
-            variant="outline"
-            className="w-full border-gray-200 hover:bg-gray-50 text-gray-700"
-            onClick={() => router.push('/signup')}
-          >
-            Konto erstellen
-          </Button>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Passwort</label>
+              <Input
+                placeholder="••••••••"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <Button 
+              variant="default" 
+              onClick={handleLogin}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors"
+            >
+              Anmelden
+            </Button>
+
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">Noch kein Konto?</span>
+              </div>
+            </div>
+
+            <Button 
+              variant="outline"
+              className="w-full border-gray-200 hover:bg-gray-50 text-gray-700"
+              onClick={() => router.push('/signup')}
+            >
+              Konto erstellen
+            </Button>
+          </div>
         </div>
       </div>
     </div>

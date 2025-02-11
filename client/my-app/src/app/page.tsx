@@ -30,6 +30,10 @@ const ResourceCalendar: React.FC = () => {
   const [jwtToken, setJwtToken] = useState<string | null>(null);
   const [user, setUser] = useState(null);
   const calendarRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [manualRoom, setManualRoom] = useState("");
+  const [manualStart, setManualStart] = useState("");
+  const [manualEnd, setManualEnd] = useState("");
 
   // Funktion zum Abrufen der Räume vom Backend
   const fetchResources = async () => {
@@ -135,6 +139,32 @@ const ResourceCalendar: React.FC = () => {
     getProtectedData();
   }, []);
 
+  // Mobile-Erkennung im useEffect
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Neue Submit-Funktion
+  const handleManualSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!manualRoom || !manualStart || !manualEnd) return;
+
+    const selectedRoom = resources.find(r => r.id === manualRoom);
+    
+    setSelectedEvent({
+      startdate: new Date(manualStart),
+      enddate: new Date(manualEnd),
+      roomId: manualRoom,
+      roomName: selectedRoom?.title || "Unbekanntes Zimmer",
+    });
+    setIsModalOpen(true);
+  };
+
   // Funktion zum Handhaben der Auswahl
   const handleSelect = async (selectInfo: any) => {
     const existingEvents = calendarRef.current?.getApi().getEvents();
@@ -214,39 +244,43 @@ const ResourceCalendar: React.FC = () => {
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
+          <div className="flex justify-between items-center flex-wrap gap-4">
+            <div className="flex items-center gap-4 flex-1 min-w-[200px]">
               <Building className="h-8 w-8 text-white" />
-              <h1 className="text-3xl font-bold tracking-tight">SmartSpace</h1>
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight truncate">SmartSpace</h1>
             </div>
             
             {jwtToken && user ? (
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2">
-                  <span className="bg-white/10 p-2 rounded-lg">
+              <div className="flex items-center gap-3 md:gap-6 flex-wrap">
+                <div className="flex items-center gap-2 order-first">
+                  <span className="bg-white/10 p-2 rounded-lg hidden sm:inline-flex">
                     <CalendarCheck className="h-5 w-5" />
                   </span>
-                  <span className="font-medium">{user}</span>
+                  <span className="font-medium text-sm md:text-base truncate max-w-[120px] md:max-w-none">
+                    {user}
+                  </span>
                 </div>
-                <Link href="/dashboard">
+                <div className="flex gap-2 flex-wrap">
+                  <Link href="/dashboard" className="flex-1">
+                    <Button 
+                      variant="ghost" 
+                      className="hover:bg-white/10 text-white text-sm md:text-base px-3 py-1 md:px-4 md:py-2"
+                    >
+                      Dashboard
+                    </Button>
+                  </Link>
                   <Button 
-                    variant="ghost" 
-                    className="hover:bg-white/10 text-white"
+                    onClick={handleLogout}
+                    variant="ghost"
+                    className="hover:bg-white/10 text-sm md:text-base px-3 py-1 md:px-4 md:py-2"
                   >
-                    Dashboard
+                    Abmelden
                   </Button>
-                </Link>
-                <Button 
-                  onClick={handleLogout}
-                  variant="ghost"
-                  className="hover:bg-white/10"
-                >
-                  Abmelden
-                </Button>
+                </div>
               </div>
             ) : (
               <Link href="/login">
-                <Button className="bg-white text-blue-600 hover:bg-white/90">
+                <Button className="bg-white text-blue-600 hover:bg-white/90 text-sm md:text-base px-3 py-1 md:px-4 md:py-2">
                   Anmelden
                 </Button>
               </Link>
@@ -262,6 +296,54 @@ const ResourceCalendar: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Mobile Formular - Responsive Optimierungen */}
+      {isMobile && (
+        <div className="md:hidden p-4 bg-white border-b shadow-sm">
+          <form onSubmit={handleManualSubmit} className="space-y-4">
+            <div className="grid gap-4">
+              <select
+                value={manualRoom}
+                onChange={(e) => setManualRoom(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-xl text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              >
+                <option value="">Raum auswählen</option>
+                {resources.map(room => (
+                  <option key={room.id} value={room.id} className="text-gray-700">
+                    {room.title}
+                  </option>
+                ))}
+              </select>
+              
+              <div className="grid grid-cols-1 gap-4">
+                <input
+                  type="datetime-local"
+                  value={manualStart}
+                  onChange={(e) => setManualStart(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-xl text-base focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+                
+                <input
+                  type="datetime-local"
+                  value={manualEnd}
+                  onChange={(e) => setManualEnd(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-xl text-base focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+            </div>
+            
+            <Button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-base font-medium transition-colors"
+            >
+              Verfügbarkeit prüfen
+            </Button>
+          </form>
+        </div>
+      )}
 
       {/* Calendar Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 -mt-20">
@@ -326,6 +408,16 @@ const ResourceCalendar: React.FC = () => {
                 </div>
               </div>
             )}
+            selectMirror={true}
+            responsive={true}
+            eventClick={(clickInfo) => {
+              setSelectedEvent({
+                startdate: clickInfo.event.start,
+                enddate: clickInfo.event.end,
+                roomId: clickInfo.event.getResources()[0]?.id,
+              });
+              setIsModalOpen(true);
+            }}
           />
         </div>
       </div>

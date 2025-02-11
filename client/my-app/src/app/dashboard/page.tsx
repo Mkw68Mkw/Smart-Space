@@ -206,17 +206,19 @@ function Dashboard() {
       {/* Navigationsleiste */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
+          <div className="flex justify-between items-center flex-wrap gap-4">
+            <div className="flex items-center gap-4 flex-1 min-w-[200px]">
               <Building className="h-8 w-8 text-white" />
-              <h1 className="text-2xl font-bold tracking-tight">Raumreservierung Dashboard</h1>
+              <h1 className="text-xl md:text-2xl font-bold tracking-tight truncate">
+                SmartSpace Dashboard
+              </h1>
             </div>
             
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2 flex-wrap">
               <Link href="/">
                 <Button 
                   variant="ghost"
-                  className="hover:bg-white/10 text-white"
+                  className="hover:bg-white/10 text-white text-sm md:text-base px-3 py-1 md:px-4 md:py-2"
                 >
                   Zurück zur Übersicht
                 </Button>
@@ -224,7 +226,7 @@ function Dashboard() {
               <Button 
                 onClick={handleLogout}
                 variant="ghost"
-                className="hover:bg-white/10"
+                className="hover:bg-white/10 text-sm md:text-base px-3 py-1 md:px-4 md:py-2"
               >
                 Abmelden
               </Button>

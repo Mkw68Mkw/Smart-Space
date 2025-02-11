@@ -31,6 +31,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="de" className={`${inter.variable} ${jetbrains.variable} antialiased`}>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      </head>
       <body className="min-h-screen bg-background font-sans antialiased">
         {children}
         <Toaster />
