@@ -176,16 +176,9 @@ const ResourceCalendar: React.FC = () => {
 
   // Funktion zum Reservieren des Zimmers
   const reserveRoom = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // Verhindere das Standardverhalten des Formulars
+    event.preventDefault();
 
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      // Wenn kein Token vorhanden ist, leite den Benutzer zur Login-Seite weiter
-      router.push("/login");
-      return;
-    }
-
-    // Reservierungsdaten für späteren Zugriff speichern
+    // Speichere die Reservierungsdaten ZUERST
     if (selectedEvent) {
       const reservationData = {
         startdate: selectedEvent.startdate,
@@ -195,11 +188,18 @@ const ResourceCalendar: React.FC = () => {
         purpose,
       };
 
-      // Speichere die Reservierungsdaten in localStorage
       localStorage.setItem("reservationData", JSON.stringify(reservationData));
       console.log("Reservierungsdaten gespeichert:", reservationData);
     }
-    // Leite den Benutzer zur Login-Seite weiter
+
+    // Überprüfe das Token NACH dem Speichern
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+
+    // Wenn eingeloggt, weiter zum Checkout
     router.push("/checkout");
   };
 
