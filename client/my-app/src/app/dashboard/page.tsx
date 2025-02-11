@@ -30,6 +30,7 @@ function Dashboard() {
   const [editPurpose, setEditPurpose] = useState("");
   const [editStart, setEditStart] = useState("");
   const [editEnd, setEditEnd] = useState("");
+  const [sortBy, setSortBy] = useState('newest');
   const router = useRouter();
 
   // Beim Laden der Komponente den geschützten Inhalt abrufen
@@ -120,6 +121,18 @@ function Dashboard() {
     if (filterStatus === "past") return currentTime > endTime;
     
     return matchesSearch;
+  });
+
+  // Sortierfunktion hinzufügen
+  const sortedReservations = [...filteredReservations].sort((a, b) => {
+    if (sortBy === 'newest') {
+      return new Date(b.Startzeit) - new Date(a.Startzeit);
+    } else if (sortBy === 'oldest') {
+      return new Date(a.Startzeit) - new Date(b.Startzeit);
+    } else if (sortBy === 'room') {
+      return a.room_name.localeCompare(b.room_name);
+    }
+    return 0;
   });
 
   //http://localhost:8080/api/reservations_withoutAuth
@@ -264,9 +277,19 @@ function Dashboard() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Alle Reservierungen</SelectItem>
-              <SelectItem value="active">Aktive</SelectItem>
               <SelectItem value="upcoming">Bevorstehende</SelectItem>
               <SelectItem value="past">Vergangene</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="rounded-xl bg-white shadow-sm">
+              <SelectValue placeholder="Sortieren nach" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="newest">Neueste zuerst</SelectItem>
+              <SelectItem value="oldest">Älteste zuerst</SelectItem>
+              <SelectItem value="room">Raumname</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -300,7 +323,7 @@ function Dashboard() {
             </TableHeader>
             
             <TableBody className="divide-y divide-gray-200">
-              {filteredReservations.map((reservation) => (
+              {sortedReservations.map((reservation) => (
                 <TableRow 
                   key={reservation.id} 
                   className="hover:bg-gray-50 transition-colors"
@@ -338,7 +361,7 @@ function Dashboard() {
             </TableBody>
           </Table>
           
-          {filteredReservations.length === 0 && (
+          {sortedReservations.length === 0 && (
             <div className="p-6 text-center text-gray-500">
               Keine Reservierungen gefunden
             </div>

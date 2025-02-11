@@ -77,8 +77,14 @@ const ResourceCalendar: React.FC = () => {
         id: reservation.id.toString(), // ID in einen String umwandeln
         resourceId: reservation.room_id.toString(), // resourceId setzen
         title: "", // Zweck der Reservierung
-        start: reservation.Startzeit, // Startzeit der Reservierung
-        end: reservation.Endzeit, // Endzeit der Reservierung
+        start: new Date(
+          new Date(reservation.Startzeit).getTime() - 
+          new Date(reservation.Startzeit).getTimezoneOffset() * 60000
+        ),
+        end: new Date(
+          new Date(reservation.Endzeit).getTime() - 
+          new Date(reservation.Endzeit).getTimezoneOffset() * 60000
+        ),
       }));
 
       setEvents(formattedEvents); // Setze die Events in den Zustand
