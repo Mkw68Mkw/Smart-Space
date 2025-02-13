@@ -20,10 +20,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "react-hot-toast";
 
+// Interface für Reservierungsobjekte definieren
+interface Reservation {
+  id: string;
+  room_name: string;
+  Zweck: string;
+  Startzeit: string;
+  Endzeit: string;
+}
+
 function Dashboard() {
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
-  const [reservations, setReservations] = useState([]);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -109,7 +118,7 @@ function Dashboard() {
     router.push("/login");
   };
 
-  const filteredReservations = reservations.filter(reservation => {
+  const filteredReservations = reservations.filter((reservation: Reservation) => {
     const matchesSearch = reservation.room_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       reservation.Zweck.toLowerCase().includes(searchTerm.toLowerCase());
     
