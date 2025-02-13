@@ -209,7 +209,7 @@ function Dashboard() {
   };
 
   // Open edit modal
-  const openEditModal = (reservation) => {
+  const openEditModal = (reservation: Reservation) => {
     setSelectedReservation(reservation);
     setEditPurpose(reservation.Zweck);
     setEditStart(new Date(reservation.Startzeit).toISOString());
