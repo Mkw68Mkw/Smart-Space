@@ -170,7 +170,7 @@ function Dashboard() {
   };
 
   // Update reservation
-  const handleUpdate = async (e) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const response = await fetch(
