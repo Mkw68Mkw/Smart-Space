@@ -149,7 +149,7 @@ function Dashboard() {
   //https://roomreservation-flaskserver.onrender.com/api/reservations/
 
   // Delete reservation
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: string) => {
     if (confirm("Möchten Sie diese Reservierung wirklich löschen?")) {
       try {
         const response = await fetch(`https://roomreservation-flaskserver.onrender.com/api/reservations/${id}`, {
