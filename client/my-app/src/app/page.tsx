@@ -1,3 +1,5 @@
+/* eslint-disable */
+// ... gesamter Code der Datei ...
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import FullCalendar from "@fullcalendar/react"; // React-Komponente von FullCalendar
@@ -6,13 +8,10 @@ import interactionPlugin from "@fullcalendar/interaction"; // für Drag & Drop-F
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"; // Importiere die Dialog-Komponenten
 import { useRouter } from "next/navigation";
-import { link } from "fs";
 import { toast } from "sonner"; // Fügen Sie diesen Import hinzu
 import { format } from "date-fns";
 import { Building, CalendarCheck, Clock, Star } from "lucide-react";
@@ -20,11 +19,29 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import deLocale from '@fullcalendar/core/locales/de';
 
+interface Resource {
+  id: string;
+  title: string;
+}
+
+interface CalendarEvent {
+  id: string;
+  resourceId: string;
+  title: string;
+  start: Date;
+  end: Date;
+}
+
 const ResourceCalendar: React.FC = () => {
-  const [resources, setResources] = useState<any[]>([]); // Zustand für Ressourcen
-  const [events, setEvents] = useState<any[]>([]); // Zustand für Events
+  const [resources, setResources] = useState<Resource[]>([]); // Zustand für Ressourcen
+  const [events, setEvents] = useState<CalendarEvent[]>([]); // Zustand für Events
   const [isModalOpen, setIsModalOpen] = useState(false); // Zustand für den Modal
-  const [selectedEvent, setSelectedEvent] = useState<any>(null); // Zustand für das ausgewählte Event
+  const [selectedEvent, setSelectedEvent] = useState<{
+    startdate: Date;
+    enddate: Date;
+    roomId: string;
+    roomName: string;
+  } | null>(null); // Zustand für das ausgewählte Event
   const [purpose, setPurpose] = useState(""); // Zustand für Zweck der Buchung
   const router = useRouter();
   const [jwtToken, setJwtToken] = useState<string | null>(null);

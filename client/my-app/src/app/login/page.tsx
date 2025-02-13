@@ -27,12 +27,6 @@ function LoginPage() {
         // JWT im localStorage speichern
         localStorage.setItem("access_token", data.access_token); 
 
-        // Admin-Check vor der Reservierungsprüfung
-        if (username === "admin") {
-          router.push("/admin");
-          return; // Frühes Return um weitere Checks zu überspringen
-        }
-
         // Überprüfe, ob Reservierungsinformationen existieren
         const storedReservation = localStorage.getItem("reservationData");
         if (storedReservation) {

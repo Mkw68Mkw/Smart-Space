@@ -2,8 +2,15 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+interface ReservationData {
+  id: string;
+  startdate: string;
+  enddate: string;
+  roomName: string;
+}
+
 const ConfirmationPage: React.FC = () => {
-  const [reservation, setReservation] = useState<any>(null);
+  const [reservation, setReservation] = useState<ReservationData | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -31,10 +38,10 @@ const ConfirmationPage: React.FC = () => {
             <strong>Zimmer:</strong> {reservation.roomName}
           </p>
           <p>
-            <strong>Startdatum:</strong> {new Date(reservation.start).toLocaleString()}
+            <strong>Startdatum:</strong> {new Date(reservation.startdate).toLocaleString()}
           </p>
           <p>
-            <strong>Enddatum:</strong> {new Date(reservation.end).toLocaleString()}
+            <strong>Enddatum:</strong> {new Date(reservation.enddate).toLocaleString()}
           </p>
           <p>
             <strong>Zweck der Buchung:</strong> {reservation.purpose}

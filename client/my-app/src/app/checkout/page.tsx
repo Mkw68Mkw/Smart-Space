@@ -5,8 +5,16 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { Building, CalendarClock, ClipboardList } from "lucide-react";
 
+interface ReservationData {
+  startdate: string;
+  enddate: string;
+  roomId: string;
+  roomName: string;
+  purpose: string;
+}
+
 const CheckoutPage: React.FC = () => {
-  const [reservation, setReservation] = useState<any>(null);
+  const [reservationData, setReservationData] = useState<ReservationData | null>(null);
   const [jwtToken, setJwtToken] = useState<string | null>(null);
   const router = useRouter();
 
@@ -15,7 +23,7 @@ const CheckoutPage: React.FC = () => {
     const storedReservation = localStorage.getItem("reservationData");
     if (storedReservation) {
       const reservationData = JSON.parse(storedReservation);
-      setReservation(reservationData);
+      setReservationData(reservationData);
     }
 
     // JWT-Token abrufen
@@ -38,11 +46,11 @@ const CheckoutPage: React.FC = () => {
 
     // Finales Reservierungsobjekt erstellen
     const finalReservation = {
-      start: reservation.startdate, // Startdatum und -zeit setzen
-      room_id: reservation.roomId, // room_id aus den Reservierungsdaten
-      end: reservation.enddate, // Enddatum und -zeit setzen
+      start: reservationData?.startdate, // Startdatum und -zeit setzen
+      room_id: reservationData?.roomId, // room_id aus den Reservierungsdaten
+      end: reservationData?.enddate, // Enddatum und -zeit setzen
       token: jwtToken, // JWT-Token hinzufügen
-      purpose: reservation.purpose, // Zweck der Buchung hinzufügen
+      purpose: reservationData?.purpose, // Zweck der Buchung hinzufügen
     };
 
     console.log("Finale Reservierung:", finalReservation); // Ausgabe in der Konsole
@@ -81,7 +89,7 @@ const CheckoutPage: React.FC = () => {
       <h2 className="text-3xl font-bold text-gray-900 mb-8">Reservierungsübersicht</h2>
       {jwtToken ? (
         <div className="space-y-8">
-          {reservation ? (
+          {reservationData ? (
             <form onSubmit={handleReservationSubmit} className="space-y-8">
               <div className="bg-gray-50 p-6 rounded-xl">
                 <div className="flex items-center gap-3 mb-4">
@@ -91,7 +99,7 @@ const CheckoutPage: React.FC = () => {
                   <h3 className="text-xl font-semibold text-gray-900">Raumdetails</h3>
                 </div>
                 <p className="text-lg text-gray-700">
-                  {reservation.roomName}
+                  {reservationData.roomName}
                 </p>
               </div>
 
@@ -105,13 +113,13 @@ const CheckoutPage: React.FC = () => {
                     <div>
                       <dt className="text-sm text-gray-500">Von</dt>
                       <dd className="font-medium text-gray-900">
-                        {format(new Date(reservation.startdate), "dd.MM.yyyy HH:mm")}
+                        {format(new Date(reservationData.startdate), "dd.MM.yyyy HH:mm")}
                       </dd>
                     </div>
                     <div>
                       <dt className="text-sm text-gray-500">Bis</dt>
                       <dd className="font-medium text-gray-900">
-                        {format(new Date(reservation.enddate), "dd.MM.yyyy HH:mm")}
+                        {format(new Date(reservationData.enddate), "dd.MM.yyyy HH:mm")}
                       </dd>
                     </div>
                   </dl>
@@ -125,7 +133,7 @@ const CheckoutPage: React.FC = () => {
                   <dl className="space-y-2">
                     <div>
                       <dt className="text-sm text-gray-500">Zweck</dt>
-                      <dd className="font-medium text-gray-900">{reservation.purpose}</dd>
+                      <dd className="font-medium text-gray-900">{reservationData.purpose}</dd>
                     </div>
                   </dl>
                 </div>
