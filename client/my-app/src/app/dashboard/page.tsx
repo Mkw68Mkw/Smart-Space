@@ -136,9 +136,9 @@ function Dashboard() {
   // Sortierfunktion hinzufügen
   const sortedReservations = [...filteredReservations].sort((a, b) => {
     if (sortBy === 'newest') {
-      return new Date(b.Startzeit) - new Date(a.Startzeit);
+      return Number(new Date(b.Startzeit)) - Number(new Date(a.Startzeit));
     } else if (sortBy === 'oldest') {
-      return new Date(a.Startzeit) - new Date(b.Startzeit);
+      return Number(new Date(a.Startzeit)) - Number(new Date(b.Startzeit));
     } else if (sortBy === 'room') {
       return a.room_name.localeCompare(b.room_name);
     }
