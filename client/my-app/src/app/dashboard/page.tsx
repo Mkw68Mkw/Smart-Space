@@ -36,7 +36,7 @@ function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedReservation, setSelectedReservation] = useState(null);
+  const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [editPurpose, setEditPurpose] = useState("");
   const [editStart, setEditStart] = useState("");
   const [editEnd, setEditEnd] = useState("");
@@ -173,6 +173,12 @@ function Dashboard() {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Null-Check hinzufügen
+      if (!selectedReservation) {
+        toast.error("Keine Reservierung ausgewählt");
+        return;
+      }
+
       const response = await fetch(
         `https://roomreservation-flaskserver.onrender.com/api/reservations/${selectedReservation.id}`,
         {
