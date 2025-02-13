@@ -46,7 +46,7 @@ const ResourceCalendar: React.FC = () => {
   const router = useRouter();
   const [jwtToken, setJwtToken] = useState<string | null>(null);
   const [user, setUser] = useState(null);
-  const calendarRef = useRef(null);
+  const calendarRef = useRef<InstanceType<typeof FullCalendar>>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [manualRoom, setManualRoom] = useState("");
   const [manualStart, setManualStart] = useState("");
@@ -184,10 +184,10 @@ const ResourceCalendar: React.FC = () => {
 
   // Funktion zum Handhaben der Auswahl
   const handleSelect = async (selectInfo: any) => {
-    const existingEvents = calendarRef.current?.getApi().getEvents();
+    const existingEvents = calendarRef.current?.getApi()?.getEvents();
     const newStart = selectInfo.start;
     const newEnd = selectInfo.end;
-    const newRoomId = selectInfo.resource.id;
+    const newRoomId = selectInfo.resource?.id;
 
     const hasOverlap = existingEvents?.some(event => {
       return event.getResources()[0].id === newRoomId && 
