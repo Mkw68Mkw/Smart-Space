@@ -191,8 +191,8 @@ const ResourceCalendar: React.FC = () => {
 
     const hasOverlap = existingEvents?.some(event => {
       return event.getResources()[0].id === newRoomId && 
-             event.start < newEnd && 
-             event.end > newStart;
+             event.start! < newEnd && 
+             event.end! > newStart;
     });
 
     if (hasOverlap) {
