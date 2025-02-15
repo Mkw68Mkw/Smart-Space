@@ -429,9 +429,10 @@ const ResourceCalendar: React.FC = () => {
             //responsive={true}
             eventClick={(clickInfo) => {
               setSelectedEvent({
-                startdate: clickInfo.event.start,
-                enddate: clickInfo.event.end,
+                startdate: clickInfo.event.start!,
+                enddate: clickInfo.event.end!,
                 roomId: clickInfo.event.getResources()[0]?.id,
+                roomName: resources.find(r => r.id === clickInfo.event.getResources()[0]?.id)?.title || "Unbekanntes Zimmer",
               });
               setIsModalOpen(true);
             }}
