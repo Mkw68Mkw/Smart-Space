@@ -426,7 +426,7 @@ const ResourceCalendar: React.FC = () => {
               </div>
             )}
             selectMirror={true}
-            responsive={true}
+            //responsive={true}
             eventClick={(clickInfo) => {
               setSelectedEvent({
                 startdate: clickInfo.event.start,
