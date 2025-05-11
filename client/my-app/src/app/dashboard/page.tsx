@@ -353,10 +353,22 @@ function Dashboard() {
                     {reservation.Zweck}
                   </TableCell>
                   <TableCell className="px-6 py-4 text-gray-600">
-                    {format(new Date(reservation.Startzeit), "dd.MM.yyyy HH:mm")}
+                    {format(
+                      new Date(
+                        new Date(reservation.Startzeit).getTime() - 
+                        new Date(reservation.Startzeit).getTimezoneOffset() * 60000
+                      ), 
+                      "dd.MM.yyyy HH:mm"
+                    )}
                   </TableCell>
                   <TableCell className="px-6 py-4 text-gray-600">
-                    {format(new Date(reservation.Endzeit), "dd.MM.yyyy HH:mm")}
+                    {format(
+                      new Date(
+                        new Date(reservation.Endzeit).getTime() - 
+                        new Date(reservation.Endzeit).getTimezoneOffset() * 60000
+                      ), 
+                      "dd.MM.yyyy HH:mm"
+                    )}
                   </TableCell>
                   <TableCell className="px-6 py-4 space-x-2">
                     <Button

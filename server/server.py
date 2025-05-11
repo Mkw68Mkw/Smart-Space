@@ -20,10 +20,10 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=10)  # Ablaufzeit des
 # SQLAlchemy konfigurieren
 
 #Localhost
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Xiaomiao1@localhost/phase1_mydb'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Xiaomiao1@localhost/phase1_mydb'
 
 #AWS RDS
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:Xiaomiao1$@roomreservationdb.chgqgaiaee5i.eu-north-1.rds.amazonaws.com/phase1_mydb'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:Xiaomiao1$@roomreservationdb.chgqgaiaee5i.eu-north-1.rds.amazonaws.com/phase1_mydb'
 
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -89,7 +89,7 @@ users = {
 @app.route("/api/home", methods=['GET'])
 def return_home():
     return jsonify({
-        'message': "Hi, what's up?!",
+        'message': "Hi, what's up dumbass?!",
         'people': ['kevin', 'kaize', 'wu']
     })
 
